@@ -1,5 +1,6 @@
+// first, so every import below can read .env
+import 'dotenv/config'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import express from 'express'
 import session from 'express-session'
 import passport from 'passport'
@@ -18,15 +19,13 @@ const PORT = process.env.PORT || 5000
 
 const __dirname = path.resolve()
 
-app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(session({ secret: process.env.SESSION_SECRET || 'dev-only-session-secret', resave: false, saveUninitialized: false }));
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors())
-
-dotenv.config()
 
 app.use("/api/users", userRoutes)
 app.use("/api/explore", exploreRoutes)
