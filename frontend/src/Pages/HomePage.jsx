@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import toast from 'react-hot-toast'
 
 import ProfileInfo from '../Components/ProfileInfo'
@@ -8,13 +8,13 @@ import SortRepos from '../Components/SortRepos'
 import Spinner from '../Components/Spinner'
 
 const HomePage = () => {
-  const [userProfile, setUserProfile] = useState({})
+  const [userProfile, setUserProfile] = useState(null)
   const [repos, setRepos] = useState([])
   const [loading, setLoading] = useState(false)
 
   const [sortType, setSortType] = useState("recent")
 
-  const getUserProfileAndRepos = useCallback(async (username="sheeshhhhhh") => {
+  const getUserProfileAndRepos = useCallback(async (username) => {
     setLoading(true)
     try {
       const res = await fetch(`/api/users/profile/${username}`)
@@ -31,11 +31,6 @@ const HomePage = () => {
       setLoading(false)
     }
   }, [])
-
-  useEffect(() => {
-    getUserProfileAndRepos()
-  }, [getUserProfileAndRepos])
-
 
   const OnSearch = async (e, username) => {
     e.preventDefault()
@@ -72,8 +67,9 @@ const HomePage = () => {
       {repos.length > 0 && < SortRepos onSort={onSort} sortType={sortType} />}
       <div className='flex gap-4 flex-col lg:flex-row justify-center relative'>
         {userProfile && !loading && <ProfileInfo userProfile={userProfile} /> }
-        {!loading && <Repos repos={repos} />}
-        
+        {userProfile && !loading && <Repos repos={repos} />}
+        {!userProfile && !loading && <p className='mt-20 text-center text-gray-400'>Search a GitHub username to see their profile and repos.</p>}
+
         {loading && <Spinner />}
       </div>
     </div>
